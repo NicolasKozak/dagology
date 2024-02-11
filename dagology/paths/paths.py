@@ -1,5 +1,6 @@
 __author__ = "\n".join(["Nicolas Kozak (nicolas.kozak5@gmail.com)"])
 
+import random
 
 def shortest_path(node, weights, distances, predecessors):
     for v, w in weights.items():
@@ -29,3 +30,11 @@ def greedy_longest_path(node, weights, distances, predecessors):
         if distances[max_neighbor] > new_distance:
             distances[max_neighbor] = new_distance
             predecessors[max_neighbor] = node
+            
+def random_path(node, weights, distances, predecessors):
+    random_successor = random.choice(weights, key=weights.get)
+    new_distance = distances[node] + distances[(node, random_successor)]
+    if distances[random_successor] > new_distance:
+        distances[random_successor] = new_distance
+        predecessors[random_successor] = node
+    
