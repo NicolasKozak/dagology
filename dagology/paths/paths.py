@@ -32,9 +32,11 @@ def greedy_longest_path(node, weights, distances, predecessors):
             predecessors[max_neighbor] = node
             
 def random_path(node, weights, distances, predecessors):
-    random_successor = random.choice(weights, key=weights.get)
-    new_distance = distances[node] + distances[(node, random_successor)]
-    if distances[random_successor] > new_distance:
-        distances[random_successor] = new_distance
-        predecessors[random_successor] = node
+    if weights:
+        successors = list(weights.keys())
+        random_successor = random.choice(successors)
+        new_distance = distances[node] + weights[random_successor]
+        if distances[random_successor] > new_distance:
+            distances[random_successor] = new_distance
+            predecessors[random_successor] = node
     
