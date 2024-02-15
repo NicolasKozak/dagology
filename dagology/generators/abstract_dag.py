@@ -120,6 +120,9 @@ class AbstractDAG:
 
         return path
 
+    def compute_path_properties(self, path, property):
+        ...
+
     def _is_neighbor(self, x, y, weights):
         raise NotImplementedError("Subclasses must implement this method")
 
