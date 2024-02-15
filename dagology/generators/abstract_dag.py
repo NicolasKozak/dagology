@@ -10,6 +10,7 @@ class AbstractDAG:
     def __init__(self):
         self.G = nx.DiGraph()
         self.N = 0
+        self.weighted = False
         self.topological_order = None
 
     def _add_nodes(self, coordinates):
@@ -31,6 +32,7 @@ class AbstractDAG:
 
     def generate_graph(self, R, p=1.0, sorted=True, weighted=False):
         self._add_nodes(R)
+        self.weighted = weighted
 
         edges = []
         for i in range(self.N - 1):
@@ -48,6 +50,16 @@ class AbstractDAG:
         if sorted:
             self.topological_order = range(self.N)
         return self.G
+    
+    def get_weights(self):
+        if not self.weighted:
+            raise ValueError("Graph is not weighted.")
+        return nx.get_edge_attributes(self.G, 'weight')
+    
+    def get_path_weight(self, path):
+        if not self.weighted:
+            raise ValueError("Graph is not weighted.")
+        return nx.path_weight(self.G, path, 'weight')
     
     def traverse_path(self, update_path, traversal_type='forward'):
         """
@@ -68,6 +80,9 @@ class AbstractDAG:
         """
         if traversal_type not in ['forward', 'backward']:
             raise ValueError("Invalid traversal type. Type should be 'forward' or 'backward'.")
+        
+        if not self.weighted:
+            raise ValueError("Provide valid weights for the graph.")
 
         if not self.topological_order:
             raise ValueError("Provide a valid topological order")
