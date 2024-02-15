@@ -40,3 +40,8 @@ def random_path(node, weights, distances, predecessors):
             distances[random_successor] = new_distance
             predecessors[random_successor] = node
     
+
+# Calculations
+
+def get_angles(path):
+    ...
