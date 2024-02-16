@@ -1,6 +1,7 @@
 __author__ = "\n".join(["Nicolas Kozak (nicolas.kozak5@gmail.com)"])
 
 import random
+from math import atan
 
 def shortest_path(node, weights, distances, predecessors):
     for v, w in weights.items():
@@ -43,5 +44,11 @@ def random_path(node, weights, distances, predecessors):
 
 # Calculations
 
-def get_angles(path):
-    ...
+def get_angles_relative_to_geodesic(coordinates, weights):
+    angles = {}
+    for u, v in weights.keys():
+        t1, x1 = coordinates[u]
+        t2, x2 = coordinates[v]
+        sign = 1.0 if x1 == 0.5 or (x1 < 0.5) ^ (x2 > x1) else -1.0
+        angles[(u, v)] = sign * atan(abs(x2 - x1) / (t2 - t1))
+    return angles

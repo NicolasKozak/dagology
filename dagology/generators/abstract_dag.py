@@ -120,8 +120,19 @@ class AbstractDAG:
 
         return path
 
-    def compute_path_properties(self, path, property):
-        ...
+    def compute_path_property(self, path, property, traversal_type='forward'):
+        if traversal_type not in ['forward', 'backward']:
+            raise ValueError("Invalid traversal type. Type should be 'forward' or 'backward'.")
+        
+        if traversal_type == 'backward':
+            path = path[::-1]
+        
+        if not nx.is_path(self.G, path):
+            raise nx.NetworkXNoPath("path does not exist")
+        coordinates = {u:self.G.nodes[u]['position'] for u in path}
+        weights = {(u, v): self.G[u][v]['weight'] for u, v in nx.utils.pairwise(path)}
+        
+        return property(coordinates, weights)
 
     def _is_neighbor(self, x, y, weights):
         raise NotImplementedError("Subclasses must implement this method")
