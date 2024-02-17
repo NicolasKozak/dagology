@@ -45,6 +45,10 @@ def random_path(node, weights, distances, predecessors):
 # Calculations
 
 def get_angles_relative_to_geodesic(coordinates, weights):
+    """
+    Angles are positive when moving away from the geodesic
+    and negative when moving towards the geodesic.
+    """
     angles = {}
     for u, v in weights.keys():
         t1, x1 = coordinates[u]
