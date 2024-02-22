@@ -43,7 +43,7 @@ def random_path(node, weights, distances, predecessors):
             predecessors[random_successor] = node
     
 ######################################################
-# Calculations
+# Angles
 ######################################################
 
 def get_skewed_angles_minkowski(coordinates, weights):
@@ -84,3 +84,13 @@ def get_angles_rms_deviation_minkowski(coordinates, weights):
     rms_deviation = np.sqrt(np.mean((np.pi/4 - angles_array) ** 2))
 
     return angles, rms_deviation
+
+######################################################
+# Geodesic
+######################################################
+
+def get_distance_to_geodesic_minkowski(coordinates, weights):
+    """
+    Computes the euclidean distance to the geodesic for each node.
+    """
+    return {u: np.abs(x - 0.5) for u, (t, x) in coordinates.items()}
