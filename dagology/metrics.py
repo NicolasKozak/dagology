@@ -130,7 +130,7 @@ def lp_distance(x, y, p):
     x, y = np.asarray(x), np.asarray(y)
     if y.ndim == 1:
         y = y.reshape(1, -1)
-    return (abs(y - x)**(p)).sum(axis=1)
+    return (abs(y - x)**(p)).sum(axis=1)**(1/p)
     
 if __name__ == "__main__":
     print(__doc__)
