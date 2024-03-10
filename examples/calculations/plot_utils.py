@@ -1,4 +1,5 @@
 from scipy.optimize import curve_fit
+from scipy.stats import beta
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -44,7 +45,7 @@ def plot_power_law_fit(n_range, y, errors=None, power=None, title="", x_label="N
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.plot(n_range, a_fit*pow(n_range, power), label='Power law fit: $L=%.2f \cdot N^{%.2f}$' % (a_fit, power), color='red')
+    plt.plot(n_range, a_fit*pow(n_range, power), label=r'Power law fit: $L=%.2f \cdot N^{%.2f}$' % (a_fit, power), color='red')
     if legend:
         plt.legend()
     # Set log-log scale
@@ -53,16 +54,41 @@ def plot_power_law_fit(n_range, y, errors=None, power=None, title="", x_label="N
     plt.show()
 
     
-def plot_histogram(x, density=False, bins=50, title="", x_label="", y_label="", add_vertical_lines=True, figsize=(8, 6)):
+def plot_histogram(x, density=False, bins=50, title="", x_label="", y_label="", add_vertical_lines=True, beta_fit=False, figsize=(8, 6)):
     if not y_label:
         y_label = "Density" if density else "Frequency"
+    
     plt.figure(figsize=figsize)
     plt.hist(x, density=density, bins=bins, edgecolor='black')
+
     if add_vertical_lines:
         # Add dashed vertical lines at ±45 degrees
-        plt.axvline(np.radians(45), color='r', linestyle='--')
+        plt.axvline(np.radians(45), color='r', linestyle='--', label=r'Angle $= \pm \pi/4$')
         plt.axvline(-np.radians(45), color='r', linestyle='--')
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
+
+    if beta_fit:
+        # Fit beta distribution to the given data
+        params = beta.fit(x)
+
+        # Print the parameters of the fitted beta distribution
+        print("Fitted Beta Distribution Parameters:")
+        print(f"alpha = {params[0]: .4f}")
+        print(f"beta = {params[1]: .4f}")
+        print(f"loc = {params[2]: .4f}")
+        print(f"scale = {params[3]: .4f}")
+
+        # Plot the fitted beta distribution
+        eps = 0.01
+        x_lin = np.linspace(np.min(x) + eps, np.max(x) - eps, num=100)
+        beta_fit = beta.pdf(x_lin, *params)
+        plt.plot(x_lin, beta_fit,  color='orange', label=r'Beta distribution fit: $\alpha = %.3f$, $\beta = %.3f$' % (params[0], params[1]))
+        plt.legend()
     plt.show()
+
+
+def propagate_relative_error(f, a, b, a_std, b_std):
+    """Computes the standard deviation of f by adding relative uncertainties of a and b."""
+    return np.abs(f) * np.sqrt((a_std / a)**2 + (b_std / b)**2)
