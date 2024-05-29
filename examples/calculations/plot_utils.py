@@ -21,7 +21,7 @@ plot_markers = ['o', '*', '^', 'v', 's', '+', 'x', 'D', 'p', '8']
 # Plotting graphs
 ########################
     
-def plot_power_law_fit(n_range, y, errors=None, power=None, title="", x_label="Number of nodes N", y_label="Path weight", legend=True, figsize=(8,6)):
+def plot_power_law_fit(n_range, y, errors=None, power=None, title="", x_label="Number of nodes N", y_label="Path weight", legend=True, figsize=(8,6), fontsize=12, savefig=""):
     plt.figure(figsize=figsize)
     # Define the power law function
     if power is not None:
@@ -33,28 +33,31 @@ def plot_power_law_fit(n_range, y, errors=None, power=None, title="", x_label="N
     n_range = n_range.astype('float64')
     params, pcov = curve_fit(power_law, n_range, np.log(y))
     a_fit = np.exp(params[0])
+    std = np.sqrt(np.diag(pcov))
 
     if power is None:
         power = params[1]
-        print(f'Fitted power: {params[1]: .4f} +-{np.sqrt(np.diag(pcov))[1]: .4f}')
-
+        print(f'Fitted power: {power: .4f} +-{std[1]: .4f}')
+    print(f'Fitted coefficient: {a_fit: .4f} +-{abs(a_fit)*std[0]: .4f}')
     # Plot the original data and the fitted power law
     plt.scatter(n_range, y, marker='.')
     if errors is not None:
         plt.errorbar(n_range, y, yerr=errors, fmt='none', capsize=5)
     plt.title(title)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    plt.xlabel(x_label, fontsize=fontsize)
+    plt.ylabel(y_label, fontsize=fontsize)
     plt.plot(n_range, a_fit*pow(n_range, power), label=r'Power law fit: $L=%.2f \cdot N^{%.2f}$' % (a_fit, power), color='red')
     if legend:
-        plt.legend()
+        plt.legend(fontsize=fontsize)
     # Set log-log scale
     plt.xscale('log')
     plt.yscale('log')
+    if savefig:
+        plt.savefig(f"../figures/{savefig}")
     plt.show()
 
     
-def plot_histogram(x, density=False, bins=50, title="", x_label="", y_label="", add_vertical_lines=True, beta_fit=False, figsize=(8, 6)):
+def plot_histogram(x, density=False, bins=50, title="", x_label="", y_label="", add_vertical_lines=True, beta_fit=False, figsize=(8, 6), fontsize=12, savefig=""):
     if not y_label:
         y_label = "Density" if density else "Frequency"
     
@@ -65,9 +68,9 @@ def plot_histogram(x, density=False, bins=50, title="", x_label="", y_label="", 
         # Add dashed vertical lines at ±45 degrees
         plt.axvline(np.radians(45), color='r', linestyle='--', label=r'Angle $= \pm \pi/4$')
         plt.axvline(-np.radians(45), color='r', linestyle='--')
-    plt.title(title)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(x_label, fontsize=fontsize)
+    plt.ylabel(y_label, fontsize=fontsize)
 
     if beta_fit:
         # Fit beta distribution to the given data
@@ -85,7 +88,9 @@ def plot_histogram(x, density=False, bins=50, title="", x_label="", y_label="", 
         x_lin = np.linspace(np.min(x) + eps, np.max(x) - eps, num=100)
         beta_fit = beta.pdf(x_lin, *params)
         plt.plot(x_lin, beta_fit,  color='orange', label=r'Beta distribution fit: $\alpha = %.3f$, $\beta = %.3f$' % (params[0], params[1]))
-        plt.legend()
+        plt.legend(fontsize=fontsize)
+    if savefig:
+        plt.savefig(f"../figures/{savefig}")
     plt.show()
 
 
